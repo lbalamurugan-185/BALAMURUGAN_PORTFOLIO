@@ -33,7 +33,9 @@
 # finally:
 #     print("File operation completed.")
 
-try:
-    attendance=int(input())
+# try:
+#     attendance=int(input())
+
+
 
 
