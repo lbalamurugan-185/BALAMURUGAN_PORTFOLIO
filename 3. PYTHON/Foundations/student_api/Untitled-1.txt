@@ -1,0 +1,7 @@
+student_mark=int(input("enter your mark:"))
+    if student_mark>=50
+print(c)
+    elif student_mark>=75
+print(B)
+    else 
+print(A)
