@@ -120,7 +120,7 @@ I'm continuously learning and building projects to strengthen my technical and a
 
 # 📫 Connect With Me
 
-**LinkedIn:** [lbalamurugan-15](https://www.linkedin.com/in/lbalamurugan-15/)
+**LinkedIn:** [l-balamurugan](https://www.linkedin.com/in/lbalamurugan-15/)
 
 **Email:** [lbalamurugan185@gmail.com](mailto:lbalamurugan185@gmail.com)
 
