@@ -1,5 +1,12 @@
-CREATE DATABASE IF NOT EXISTS Medicare;
+#================================================================================================================================================================
+# Database creation
+#================================================================================================================================================================
+CREATE DATABASE Medicare;
 USE Medicare;
+
+#==================================================================================================================================================================
+# Table creation and insertion of values
+#==================================================================================================================================================================
 CREATE TABLE Hospitals(
 hospital_id VARCHAR(6) NOT NULL,
 hospital_name VARCHAR(100) NOT NULL,
@@ -101,6 +108,9 @@ INSERT INTO Departments (department_id, department_name, hospital_id, floor_numb
 ('D038', 'Nephrology', 'H028', 5, NULL),
 ('D039', 'Radiology', 'H029', 6, 'DR0401'),
 ('D040', 'Gynecology', 'H030', 3, 'DR0028');
+
+ALTER TABLE Departments ADD CONSTRAINT fk_Departments_Head_Doctor FOREIGN KEY(head_doctor_id) REFERENCES Doctors(doctor_id);
+
 
 CREATE TABLE Doctors (
     doctor_id VARCHAR(10) NOT NULL PRIMARY KEY,
@@ -574,11 +584,6 @@ INSERT INTO Doctors (doctor_id, first_name, last_name, gender, specialization, d
 ('DR0448', 'Ashok', 'Sarma', 'Male', 'Gastroenterology', 'D034', 'H026', 'MBBS, DNB', 23, 646.09, '9556964430', 'ashok.sarma56@gmail.com', '2018-05-31'),
 ('DR0449', 'Shobha', 'Reddappa', 'm', 'Pulmonology', 'D010', 'H008', 'MBBS, DM', 1, 816.39, '9824741407', 'shobha.reddappa7@gmail.com', '2019-11-28'),
 ('DR0450', 'Suresh', 'Varma', 'Male', 'General Medicine', 'D009', 'H007', 'MBBS, MS', 25, 807.08, '9882142369', 'suresh.varma61@gmail.com', '2013-11-28');
-ALTER TABLE Departments
-    ADD CONSTRAINT fk_Departments_Head_Doctor
-    FOREIGN KEY (head_doctor_id) REFERENCES Doctors(doctor_id);
-
-
 
 
 
@@ -33353,3 +33358,545 @@ INSERT INTO Payments (payment_id, bill_id, patient_id, payment_date, payment_amo
 ('PY004998', 'BL004426', 'PT001180', '2025-06-28', 10659.8, 'Cash', 'Success'),
 ('PY004999', 'BL003579', 'PT001269', '2024-10-01', 23667.85, 'Insurance Claim', 'Success'),
 ('PY005000', 'BL000343', 'PT000214', '2024-08-21', 19940.26, 'Net Banking', 'Success');
+
+#DROP TABLE IF EXISTS Payments;
+
+
+# Display all the tables 
+SHOW TABLES;
+
+# Describe will display the fieldname, datatype, contraints, keys in tabular format (MUL - Multiple key [It includes foreign key])
+DESCRIBE Doctors;
+
+# It is similar to Describe but it will display the exact query which has been written while creating
+SHOW CREATE TABLE Doctors;
+
+# To Drop a Database
+DROP DATABASE MEDICARES;
+
+# This will return the databases that are in use 
+SELECT DATABASE();
+
+
+# This will Count the number of records in that table
+SELECT COUNT(*) AS Total_Hospitals FROM Hospitals;
+SELECT COUNT(*) FROM Departments;
+SELECT COUNT(*) FROM Doctors;
+SELECT COUNT(*) FROM Patients;
+SELECT COUNT(*) FROM Rooms;
+SELECT COUNT(*) FROM Appointments;
+SELECT COUNT(*) FROM Admissions;
+SELECT COUNT(*) FROM Treatments;
+SELECT COUNT(*) FROM Insurance;
+SELECT COUNT(*) FROM Medicines;
+SELECT COUNT(*) FROM Pharmacy;
+SELECT COUNT(*) FROM Laboratory;
+SELECT COUNT(*) FROM Employees;
+SELECT COUNT(*) FROM Billing;
+SELECT COUNT(*) FROM Payments;
+
+# To identify the NULL values in tables
+SELECT *
+FROM Patients
+WHERE patient_id IS NULL
+   OR first_name IS NULL
+   OR last_name IS NULL
+   OR gender IS NULL
+   OR date_of_birth IS NULL
+   OR age IS NULL
+   OR city IS NULL
+   OR state IS NULL
+   OR phone_number IS NULL
+   OR email IS NULL
+   OR blood_group IS NULL
+   OR registration_date IS NULL;
+   
+# To identify the duplicates
+SELECT department_id, COUNT(*)
+FROM Doctors
+GROUP BY department_id
+HAVING COUNT(*) > 1;
+
+# To retrieve all datas top 5
+SELECT * FROM Hospitals LIMIT 5;
+
+# Duplicate check - Hospital
+SELECT hospital_id, COUNT(*) AS Count
+FROM Hospitals
+GROUP BY hospital_id
+HAVING COUNT(*) = 1;
+
+# Check null values - Department
+SELECT * FROM Departments WHERE head_doctor_id IS NULL;
+
+SELECT * FROM Doctors;
+
+# Display the first occurence of data 
+SELECT DISTINCT gender FROM Doctors;
+
+# Count the gender in different formats and group them 
+SELECT gender, COUNT(*) 
+FROM Doctors 
+group by gender;
+
+SELECT gender,doctor_id FROM Doctors;
+
+# Preview the male and female and change them 
+SELECT gender, 
+CASE 
+WHEN LOWER(TRIM(gender)) IN ('male','m')
+THEN 'Male'
+WHEN LOWER(TRIM(gender)) IN ('female','f')
+THEN 'Female'
+ELSE gender
+END AS Cleaned_gender
+FROM Doctors;
+
+Select Cleaned_gender FROM (
+Select 
+CASE 
+WHEN LOWER(TRIM(gender)) IN ('male','m')
+THEN 'Male'
+WHEN LOWER(TRIM(gender)) IN ('female','f')
+THEN 'Female'
+ELSE gender
+END AS Cleaned_gender
+FROM Doctors
+) AS D;
+
+
+
+
+# set sql_SAFE_UPDATES=0;
+
+# =========================================================================================================================================================================================
+# Data Profiling
+#====================================================================================================================================================================================================
+# 1. Departments table- head_doctor_id is null
+SELECT * from Departments where head_doctor_id is null ;
+
+# 2. Doctors - gender is in different formats
+SELECT DISTINCT gender, COUNT(*)
+from Doctors
+Group by gender;
+
+# 3. Doctors - department_id is blank
+SELECT * FROM Doctors where department_id IS NULL;
+
+# 4. Doctors - email is blank
+SELECT * FROM Doctors where email IS NULL;
+# 5. Check email format
+SELECT * FROM Doctors where email NOT REGEXP '^[A-Za-z0-9_%.-]+@[A-Za-z0-9-_.]+\\.[A-Za-z]{2,}$';
+
+# 6. Patients - Traling and leading spaces in first name
+SELECT * from Patients where first_name <> ltrim(first_name);
+
+# 7. Patients - gender in different formats
+SELECT gender, count(*) 
+FROM Patients 
+group by gender;
+
+# 8. Patient - Check for email blanks
+SELECT * FROM Patients where email is null;
+# 9. to check the email format 
+SELECT * from Patients where email not regexp '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}';
+SELECT * from Patients where email NOT like '%@%.%'; # this is another method to find invalid email, % includes any character
+
+# 10. Admissions - check for blanks in department_id
+SELECT * from Admissions where department_id is null;
+
+# 11. Admissions - check for blanks in discharge_date
+SELECT * from Admissions where discharge_date is null;
+
+# 12. Treatments - check for blanks in Admission_id
+SELECT  * FROM Treatments where Admission_id is null;
+
+# 13. Insurance - check for blanks in insurance_provider
+SELECT  * FROM Insurance where insurance_provider is null;
+
+# 14. Employee gender different formats 
+SELECT gender, count(*) 
+from Employee
+group by gender;
+
+# 15. Employees - blanks in department_id
+SELECT * FROM Employees where department_id is null;
+
+
+# 16. Billing - blanks in admission_id
+SELECT * FROM Billing where admission_id is null;
+
+# 17. Employees - blanks in appointment_id
+SELECT * FROM Billing where appointment_id is null;
+
+# ==============================================================================================================================================================================================
+# Data Cleaning
+#=====================================================================================================================================================================================================
+# 2. Update the changed male and female column in the tables - Doctors
+ UPDATE Doctors 
+ SET gender=
+ CASE 
+WHEN LOWER(TRIM(gender)) IN ('male','m')
+THEN 'Male'
+WHEN LOWER(TRIM(gender)) IN ('female','f')
+THEN 'Female'
+ELSE gender
+END;
+
+# 5. Doctors - Cleaning the emails which are in wrong format
+# This is previewing
+SELECT 
+email AS old_email,
+CASE
+WHEN email LIKE '%gmail.com' AND email NOT LIKE '%@%'
+THEN REPLACE(email,'gmail.com','@gmail.com') 
+WHEN email LIKE '%@gmail'
+THEN REPLACE(email,'@gmail','@gmail.com') # THEN CONCAT(email,'.com')
+WHEN email LIKE '%@@gmail.com' 
+THEN REPLACE(email,'@@gmail.com','@gmail.com')
+ELSE email
+END AS new_email
+FROM Doctors;
+
+# Updating
+update Doctors 
+SET email=
+CASE
+WHEN email LIKE '%gmail.com' AND email NOT LIKE '%@%'
+THEN REPLACE(email,'gmail.com','@gmail.com') 
+WHEN email LIKE '%@gmail'
+THEN REPLACE(email,'@gmail','@gmail.com') # THEN CONCAT(email,'.com')
+WHEN email LIKE '%@@gmail.com' 
+THEN REPLACE(email,'@@gmail.com','@gmail.com')
+ELSE email
+END 
+WHERE email not like '%@%.%' or
+	email like '%@@%.%';
+#SET SQL_SAFE_UPDATES = 0; - When using the Upadate query where condition is applicable for id alone but when we try to use other columns in where condition then it shows sql safe error so to fix it we use this query 
+
+# 6. Patients - Trim the first_name column
+UPDATE Patients 
+SET first_name=ltrim(first_name)
+WHERE first_name <> LTRIM(first_name);
+
+# 7. Patients - gender in different format
+SELECT DISTINCT gender from Patients;
+# Preview
+SELECT gender ,
+CASE
+WHEN lower(trim(gender)) in ('m','male')
+THEN 'Male'
+WHEN lower(trim(gender)) in ('f','female')
+THEN 'Female'
+END
+FROM Patients;
+
+# Update 
+update Patients 
+set gender =
+CASE
+WHEN lower(trim(gender)) in ('m','male')
+THEN 'Male'
+WHEN lower(trim(gender)) in ('f','female')
+THEN 'Female'
+ELSE gender
+END;
+
+# 9. Patients - email format is not correct
+SELECT email AS old_email, 
+CASE
+WHEN email LIKE '%gmail.com' AND email not like '%@%'
+THEN REPLACE(email,'%gmail.com','%@gmail.com')
+WHEN email like '%gmail'
+then concat(email,'.com')
+else email
+end as new_email
+FROM Patients;
+
+# Update 
+UPDATE Patients 
+set email=
+CASE
+WHEN email LIKE '%gmail.com' AND email not like '%@%'
+THEN REPLACE(email,'gmail.com','@gmail.com')
+WHEN email like '%gmail'
+then concat(email,'.com')
+else email
+end
+where email not like '%@%.%';
+
+# 14. Employee - gender in different format 
+select distinct gender from Employees;
+UPDATE Employees
+set gender =
+CASE
+when lower(trim(gender)) in ('male','m')
+then 'Male'
+when lower(trim(gender)) in ('female','f')
+then 'Female'
+else gender
+end;
+
+#===================================================================================================================================================================
+# Data Analysis
+#========================================================================================================================================================================
+# 1. List the unique hospital names 
+SELECT distinct hospital_name from Hospitals;
+
+# 2. How many hospitals are there in medicare
+SELECT Count(*) as Total_no_of_Hospitals From Hospitals;
+
+# 3. How many DOctors are there in medicare
+SELECT Count(*) as Total_no_of_Doctors From Doctors;
+
+# 4. How many Departments are there in medicare
+SELECT Count(*) as Total_no_of_Department From Departments;
+
+# 5. Number of doctors have experience > 10
+SELECT Count(*) as Experience_more_than_10_years FROM Doctors where experience_years > 10;
+
+# 6. Total number of bed capacity in all hospitals
+SELECT sum(bed_capacity) from Hospitals; 
+
+# 7. Average consultation fee 
+SELECT round(AVG(consultation_fee),2) from Doctors;
+
+# 8. What is the lowest consultation fee?
+select min(consultation_fee) from Doctors;
+
+# 9. What is the highest hospital bed capacity?
+select max(bed_capacity) from Hospitals;
+
+# 10. How many doctors are there in each specialization?
+select count(*),specialization from doctors
+group by specialization;
+
+# 11. How many beds does each hospital have?
+select sum(bed_capacity) as B_cp,hospital_name  from Hospitals
+group by hospital_name
+having B_cp>300;
+
+# 12. Show me only specializations that have more than 20 doctors
+select specialization,count(doctor_id) as d_id from Doctors 
+group by specialization
+having d_id > 20;
+
+# 13. Show me the top 5 specializations based on number of doctors
+select specialization, count(doctor_id) as top_5 from Doctors
+group by specialization
+order by top_5 desc limit 5;
+
+# 14. Give me each department along with the hospital it belongs to.
+select Departments.department_name, Hospitals.hospital_name
+from Departments
+INNER JOIN Hospitals ON Departments.hospital_id=Hospitals.hospital_id;
+
+# 15. How many doctors are associated with each hospital?
+select count(Doctors.doctor_id) ,Hospitals.hospital_name
+from Doctors inner join Hospitals On Doctors.hospital_id = Hospitals.hospital_id 
+group by Doctors.hospital_id;
+
+# 16. Show only specializations having more than 20 doctors, ranked highest first.
+select Hospitals.hospital_name,Departments.department_name 
+from Hospitals 
+left join Departments on Hospitals.hospital_id = Departments.hospital_id;
+
+# 17. How many doctors does each hospital have ?
+select Hospitals.hospital_name, count(Doctors.doctor_id)
+from Hospitals 
+left join Doctors on Hospitals.hospital_id = Doctors.hospital_id
+group by Hospitals.hospital_id;
+
+# 18. How many hospitals have more then 20 doctors
+select Hospitals.hospital_name, count(Doctors.doctor_id)
+from Hospitals 
+left join Doctors on Hospitals.hospital_id = Doctors.hospital_id
+group by Hospitals.hospital_id
+having count(Doctors.doctor_id) > 20;
+
+# 19. Which specialization has highest number of doctors
+select specialization,count(doctor_id) as m
+from Doctors
+group by specialization 
+order by m desc limit 5;
+
+# 20. what is the avg consultation fee by specialization
+select specialization, avg(consultation_fee) as m
+from Doctors
+group by specialization;
+
+# 21. How many appointments does each doctor have ?
+select doctor_id,count(appointment_id)
+from Appointments 
+group by doctor_id; 
+
+# 22. Rank the consulatation fee from higher to lower 
+select Doctors.first_name, Doctors.consultation_fee,specialization,row_number() 
+over (order by Doctors.consultation_fee desc) as rnk
+from Doctors;
+
+# 23. Rank the consultation fee from higher to lower based on specialization
+select Doctors.first_name, Doctors.consultation_fee,specialization,row_number() 
+over (partition by specialization order by Doctors.consultation_fee desc) as rnk
+from Doctors;
+
+# 24. Rank the consultation fee from higher to lower based on specialization.Rank will use the same number for same numbers 
+select Doctors.first_name, Doctors.consultation_fee,specialization,rank() 
+over (partition by specialization order by Doctors.consultation_fee desc) as rnk
+from Doctors;
+
+# 25. Display the previous data 
+select Doctors.first_name, Doctors.consultation_fee,specialization, lag(Doctors.consultation_fee) 
+over (order by Doctors.consultation_fee desc) as rnk
+from Doctors;
+
+# 26. Display the data after this row
+select Doctors.first_name, Doctors.consultation_fee,specialization, lead(Doctors.consultation_fee) 
+over (order by Doctors.consultation_fee desc) as rnk
+from Doctors;
+
+# 27. Rank the data based on consultation fee by departments
+select Departments.department_name , Doctors.first_name, Doctors.consultation_fee,row_number() 
+over (partition by Departments.department_name order by Doctors.consultation_fee desc) as rnk
+from Departments inner join Doctors
+on Doctors.hospital_id = Departments.hospital_id;
+
+# 28. Rank the data by consultation fee
+select Departments.department_name, Doctors.first_name, Doctors.consultation_fee, row_number()
+over (order by Doctors.consultation_fee desc) as rnk
+from Departments inner join Doctors
+on Doctors.hospital_id = Departments.hospital_id;
+
+# 29. Top 5 hospital name based on number of doctors
+select Hospitals.hospital_name,count(Doctors.doctor_id) as c_d
+from Hospitals inner join Doctors on Hospitals.hospital_id = Doctors.hospital_id
+Group by Hospitals.hospital_name
+order by c_d desc limit 5;
+
+# 30. Display hospital with most doctors
+select Hospitals.hospital_name,count(Doctors.doctor_id) as c_d
+from Hospitals inner join Doctors on Hospitals.hospital_id = Doctors.hospital_id
+Group by Hospitals.hospital_name
+order by c_d desc limit 1;
+
+# 31. Which departments have the highest appointment workload?
+SELECT d.department_name,COUNT(a.appointment_id) AS total_appointments
+FROM Appointments a
+JOIN Doctors dr
+ON a.doctor_id = dr.doctor_id
+JOIN Departments d
+ON dr.department_id = d.department_id
+GROUP BY d.department_id, d.department_name
+ORDER BY total_appointments DESC;
+
+# 32. Which hospitals have the highest number of admissions?
+SELECT h.hospital_name, COUNT(ad.admission_id) AS total_admissions
+FROM Admissions ad
+JOIN Hospitals h
+ON ad.hospital_id = h.hospital_id
+GROUP BY h.hospital_id, h.hospital_name
+ORDER BY total_admissions DESC;
+
+#33. What are the admission type patterns?
+SELECT admission_type,COUNT(*) AS total_admissions
+FROM Admissions
+GROUP BY admission_type
+ORDER BY total_admissions DESC;
+
+#34/ What are the admission status patterns?
+SELECT admission_status,COUNT(*) AS total_admissions
+FROM Admissions
+GROUP BY admission_status
+ORDER BY total_admissions DESC;
+
+#35. What is the average patient length of stay?
+
+SELECT
+    ROUND(
+        AVG(DATEDIFF(discharge_date, admission_date)),
+        2
+    ) AS average_length_of_stay_days
+FROM Admissions
+WHERE discharge_date IS NOT NULL
+  AND discharge_date >= admission_date;
+  
+# 36. How are rooms distributed by type?
+SELECT
+    room_type,
+    COUNT(room_id) AS total_rooms
+FROM Rooms
+GROUP BY room_type
+ORDER BY total_rooms DESC;
+
+# 37.  Which treatments have the highest activity?
+SELECT
+    treatment_name,
+    COUNT(treatment_id) AS treatment_count
+FROM Treatments
+GROUP BY treatment_name
+ORDER BY treatment_count DESC;
+
+# 38. Which laboratory tests have the highest volume?
+SELECT
+    test_name,
+    COUNT(lab_test_id) AS test_volume
+FROM Laboratory
+GROUP BY test_name
+ORDER BY test_volume DESC;
+
+# 39. Which medicine categories generate the highest sales?
+SELECT
+    m.category,
+    SUM(p.quantity) AS total_quantity_sold,
+    ROUND(SUM(p.total_price), 2) AS total_sales
+FROM Pharmacy p
+JOIN Medicines m
+    ON p.medicine_id = m.medicine_id
+GROUP BY m.category
+ORDER BY total_sales DESC;
+
+# 40. What is the total billed amount?
+SELECT ROUND(SUM(total_amount), 2) AS total_billed_amount
+FROM Billing;
+
+# 41. Which billing components contribute the most?
+SELECT
+    ROUND(SUM(room_charges), 2) AS room_charges,
+    ROUND(SUM(doctor_charges), 2) AS doctor_charges,
+    ROUND(SUM(medicine_charges), 2) AS medicine_charges,
+    ROUND(SUM(lab_charges), 2) AS lab_charges,
+    ROUND(SUM(other_charges), 2) AS other_charges,
+    ROUND(SUM(total_amount), 2) AS total_billed
+FROM Billing;
+
+# 42. What is the total payment collected?
+SELECT
+    ROUND(SUM(payment_amount), 2) AS total_payment_collected
+FROM Payments
+WHERE payment_status = 'Success';
+
+# 43. What is the gap between billed and collected amounts?
+SELECT SUM(b.total_amount) - SUM(p.payment_amount)
+FROM Billing b
+JOIN Payments p ON b.bill_id = p.bill_id;
+
+
+use Medicare;
+select gender from Doctors;
+select floor(avg(bed_capacity)) from Hospitals;   
+
+
+select specialization , count(*) as c from doctors
+group by specialization
+having c>50
+order by c desc;
+
+select * from Hospitals where bed_capacity>50 limit 5;
+
+select * from Hospitals where bed_capacity>50 or city = 'Coimbatore';
+
+select Hospitals.hospital_name, count(Departments.department_id) as c
+from Hospitals 
+inner join Departments on Hospitals.hospital_id = Departments.hospital_id
+group by Hospitals.hospital_id,Hospitals.hospital_name;
+
