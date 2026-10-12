@@ -10,6 +10,12 @@ The project is based on the TrendMart Business Requirements Document (BRD), Vers
 
 ---
 
+
+
+## 🖼️ Dashboard Preview
+
+![TrendMart Fashion Dashboard](TrendMart_Fashion_Dashboard.png)
+
 ## 🎯 Business Problem
 
 TrendMart generates sales across multiple products, stores, and channels, but revenue alone does not show whether the business is performing profitably.
