@@ -11,10 +11,11 @@ The project is based on the TrendMart Business Requirements Document (BRD), Vers
 ---
 
 
-
 ## 🖼️ Dashboard Preview
 
-![TrendMart Fashion Dashboard](TrendMart_Fashion_Dashboard.png)
+<p align="center">
+  <img src="./TrendMart_Fashion_Dashboard.png" alt="TrendMart Fashion Enterprise Dashboard" width="100%">
+</p>
 
 ## 🎯 Business Problem
 

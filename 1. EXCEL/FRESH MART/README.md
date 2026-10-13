@@ -11,10 +11,11 @@ The project follows the requirements defined in the **FreshMart Business Require
 According to the BRD, the objective is to provide management with a consolidated view of business performance and help identify strong and weak performance areas. 
 
 
-
 ## 🖼️ Dashboard Preview
 
-![FreshMart Sales Dashboard](FreshMart_Sales_Dashboard.png)
+<p align="center">
+  <img src="./FreshMart_Sales_Dashboard.png" alt="FreshMart Sales Dashboard" width="100%">
+</p>
 
 ## 🎯 Business Objective
 
