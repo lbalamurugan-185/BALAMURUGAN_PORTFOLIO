@@ -52,9 +52,47 @@ python student_management.py
 ```text
 Student-Management-System/
 │
+├── Screenshots/
+│   ├── Add_Faculty_Details.png
+│   ├── Add_Student.png
+│   ├── Attendance_Eligiblity.png
+│   ├── Choice_Show_In_Terminal.png
+│   ├── End_The_Program.png
+│   ├── View_Faculties_Details.png
+│   ├── View_Results_Of_Students.png
+│   └── View_Students_Details.png
 ├── student_management.py
 └── README.md
 ```
+
+
+## Application Screenshots
+
+The following screenshots demonstrate the main features and console output of the Student Management System.
+
+### Main Menu
+![Main Menu](Screenshots/Choice_Show_In_Terminal.png)
+
+### Add Student
+![Add Student](Screenshots/Add_Student.png)
+
+### View Student Details
+![View Student Details](Screenshots/View_Students_Details.png)
+
+### Add Faculty
+![Add Faculty Details](Screenshots/Add_Faculty_Details.png)
+
+### View Faculty Details
+![View Faculty Details](Screenshots/View_Faculties_Details.png)
+
+### Attendance Eligibility Check
+![Attendance Eligibility](Screenshots/Attendance_Eligiblity.png)
+
+### View Academic Results
+![Student Academic Results](Screenshots/View_Results_Of_Students.png)
+
+### Exit the Program
+![Exit Program](Screenshots/End_The_Program.png)
 
 ## Future Enhancements
 - Add student and faculty record update and delete options.
